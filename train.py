@@ -10,16 +10,29 @@ def train(dataset, model, epochs=config.EPOCHS, lr=config.LEARNING_RATE, num_neg
         pairs = dataset.generate_pairs()
         
         total_loss = 0
-        for center, context in pairs:
+        for batch in dataset.batch_generator(pairs, config.BATCH_SIZE):
+            
+            # Get centers and contexts
+            centers = batch[:, 1]
+            contexts = batch[:, 0]
+
             # Get negative samples
-            negative_samples = np.random.choice(dataset.vocab_size, num_neg_samples, p=prob)
+            negative_samples = np.random.choice(
+                dataset.vocab_size,
+                size=(len(centers),num_neg_samples),
+                p=prob
+            )
 
             # Forward pass and update model
-            loss_pos, loss_neg, grad_center_pos, grad_center_neg, grad_context_pos, grad_context_neg = model.forward_pass(center, context, negative_samples)
+            loss_pos, loss_neg, grad_center_pos, grad_center_neg, grad_context_pos, grad_context_neg = model.forward_pass(centers, contexts, negative_samples)
+            grad_center = grad_center_pos + grad_center_neg
+            model.update(centers, contexts, negative_samples, grad_center, grad_context_pos, grad_context_neg, lr)
 
-            model.update(center, context, negative_samples, grad_center_pos, grad_center_neg, grad_context_pos, grad_context_neg, lr)
-            total_loss += loss_pos + loss_neg
-        
+            # Normalize embeddings to prevent overflow
+            model.normalize_embeddings()
+
+            total_loss += np.sum(loss_pos + loss_neg)
+
         # Create a checkpoint if enabled
         if config.MAKE_CHECKPOINTS and (epoch + 1) % config.CHECKPOINT_INTERVAL == 0:
             create_checkpoint(model, dataset)
