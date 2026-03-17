@@ -1,6 +1,7 @@
 import numpy as np
+import config
 
-def train(dataset, model, epochs=1, lr=0.01, num_neg_samples=5):
+def train(dataset, model, epochs=config.EPOCHS, lr=config.LEARNING_RATE, num_neg_samples=config.NEGATIVE_SAMPLES):
     freq = dataset.vocab_freq ** 0.75
     prob = freq / np.sum(freq)
 

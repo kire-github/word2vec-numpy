@@ -1,8 +1,9 @@
 import numpy as np
 from utils import positive_step, negative_step
+from config import EMBEDDING_DIM
 
 class SGNS:
-    def __init__(self, vocab_size, embedding_dim):
+    def __init__(self, vocab_size, embedding_dim=EMBEDDING_DIM):
         self.vocab_size = vocab_size
         self.embedding_dim = embedding_dim
 

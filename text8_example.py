@@ -11,27 +11,21 @@ print("Processing dataset...")
 with open("text8", "r") as f:
     text = f.read()
 
-window_size = 5
-min_frequency = 5
-dataset = Dataset(text, window_size, min_frequency)
+dataset = Dataset(text)
 
 print("Dataset initialized")
 
 # ----------------------
 # 2. Initialize model
 # ----------------------
-embedding_dim = 50
-model = SGNS(vocab_size=dataset.vocab_size, embedding_dim=embedding_dim)
+model = SGNS(vocab_size=dataset.vocab_size)
 
 # ----------------------
 # 3. Training loop
 # ----------------------
-epochs = 20
-lr = 0.02
-neg_samples = 5
 
 print("Starting training...")
-train(dataset, model, epochs=epochs, lr=lr, num_neg_samples=neg_samples)
+train(dataset, model)
 print("Training completed")
 
 # ----------------------

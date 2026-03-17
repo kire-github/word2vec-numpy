@@ -1,10 +1,11 @@
 import re
 from collections import Counter
 import numpy as np
+from config import MIN_WORD_FREQUENCY, WINDOW_SIZE
 
 class Dataset:
-    def __init__(self, raw_text, window_size, word_min_frequency):        
-        self.tokens = self.tokenize(raw_text)[:100000]
+    def __init__(self, raw_text, window_size=WINDOW_SIZE, word_min_frequency=MIN_WORD_FREQUENCY):        
+        self.tokens = self.tokenize(raw_text)[:10000]
         print(self.tokens[:40])
         self.build_vocab(word_min_frequency)
         self.window_size = window_size
