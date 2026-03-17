@@ -5,7 +5,7 @@ from config import MIN_WORD_FREQUENCY, WINDOW_SIZE
 
 class Dataset:
     def __init__(self, raw_text, window_size=WINDOW_SIZE, word_min_frequency=MIN_WORD_FREQUENCY):        
-        self.tokens = self.tokenize(raw_text)[:10000]
+        self.tokens = self.tokenize(raw_text)
         print(self.tokens[:40])
         self.build_vocab(word_min_frequency)
         self.window_size = window_size
@@ -41,3 +41,17 @@ class Dataset:
             for context_idx in range(max(0, idx - self.window_size), min(len(self.token_indices), idx + self.window_size + 1)):
                 if context_idx != idx:
                     yield (token_idx, self.token_indices[context_idx])
+    
+    def batch_generator(self, generator, batch_size):
+        """
+        Utility function to create batches from a generator
+        """
+        batch = []
+        for item in generator:
+            batch.append(item)
+            if len(batch) == batch_size:
+                yield np.array(batch)
+                batch = []
+
+        if batch:
+            yield np.array(batch)
