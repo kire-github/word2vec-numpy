@@ -1,4 +1,5 @@
 import numpy as np
+from config import CHECKPOINT_NAME
 
 def cosine_similarity(vec1, vec2):
     return np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
@@ -25,3 +26,15 @@ def negative_step(e_c, c_n):
     grad_negatives = prob[:, None] * e_c
 
     return loss, grad_center, grad_negatives
+
+def create_checkpoint(model, dataset):
+    """
+    Creates a checkpoint from which training can continue
+    """
+    np.savez(
+        CHECKPOINT_NAME,
+        W_embedding=model.W_embedding,
+        W_context=model.W_context,
+        word_to_idx=dataset.word_to_idx,
+        idx_to_word=dataset.idx_to_word
+    )
