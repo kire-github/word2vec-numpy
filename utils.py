@@ -1,29 +1,30 @@
 import numpy as np
-from config import CHECKPOINT_NAME
+from config import CHECKPOINT_NAME, EPSILON
 
 def cosine_similarity(vec1, vec2):
     return np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
 
 def sigmoid(x):
+    x = np.clip(x, -30, 30)
     return 1 / (1 + np.exp(-x))
 
 def positive_step(e_c, c_p):
-    score = np.dot(c_p, e_c)
+    score = np.sum(e_c * c_p, axis=1)
     prob = sigmoid(score)
 
-    loss = -np.log(prob)
-    grad_center = (prob - 1) * c_p
-    grad_context = (prob - 1) * e_c
+    loss = -np.log(np.clip(prob, EPSILON, 1 - EPSILON))
+    grad_center = (prob - 1)[:, None] * c_p
+    grad_context = (prob - 1)[:, None] * e_c
 
     return loss, grad_center, grad_context
 
 def negative_step(e_c, c_n):
-    score = c_n @ e_c
-    prob = sigmoid(score)
+    score = np.sum(c_n * e_c[:, None, :], axis=2)
+    prob = sigmoid(-score)
 
-    loss = -np.sum(np.log(1 - prob))
-    grad_center = np.sum(prob[:, None] * c_n, axis=0)
-    grad_negatives = prob[:, None] * e_c
+    loss = -np.sum(np.log(np.clip(prob, EPSILON, 1 - EPSILON)), axis=1)
+    grad_center = np.sum(prob[:, :, None] * c_n, axis=1)
+    grad_negatives = prob[:, :, None] * e_c[:, None, :]
 
     return loss, grad_center, grad_negatives
 
