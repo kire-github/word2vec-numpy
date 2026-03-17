@@ -38,3 +38,16 @@ def create_checkpoint(model, dataset):
         word_to_idx=dataset.word_to_idx,
         idx_to_word=dataset.idx_to_word
     )
+
+def load_checkpoint(path):
+    """
+    Load a checkpoint so that it can be restored
+    """
+    data = np.load(path, allow_pickle=True)
+
+    W_embedding = data["W_embedding"]
+    W_context = data["W_context"]
+    word_to_idx = data["word_to_idx"].item()
+    idx_to_word = data["idx_to_word"].item()
+
+    return W_embedding, W_context, word_to_idx, idx_to_word
