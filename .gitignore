@@ -16,3 +16,7 @@ build/
 
 # OS
 .DS_Store
+
+# Text8 Dataset
+text8*
+!text8_example.py
