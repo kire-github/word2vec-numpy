@@ -1,5 +1,5 @@
 import numpy as np
-import config
+import config as config
 from utils import create_checkpoint
 
 def train(dataset, model, epochs=config.EPOCHS, lr=config.LEARNING_RATE, num_neg_samples=config.NEGATIVE_SAMPLES):
