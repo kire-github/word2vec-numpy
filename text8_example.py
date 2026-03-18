@@ -23,7 +23,6 @@ model = SGNS(vocab_size=dataset.vocab_size)
 # ----------------------
 # 3. Training loop
 # ----------------------
-
 print("Starting training...")
 train(dataset, model)
 print("Training completed")
@@ -31,7 +30,6 @@ print("Training completed")
 # ----------------------
 # 4. Test
 # ----------------------
-
 print("Testing embeddings...")
 def most_similar(word, number=5):
     if word not in dataset.word_to_idx:
