@@ -1,9 +1,12 @@
+from typing import Tuple
 import numpy as np
+from numpy.typing import NDArray
+
 from utils import positive_step, negative_step
 from config import EMBEDDING_DIM
 
 class SGNS:
-    def __init__(self, vocab_size, embedding_dim=EMBEDDING_DIM):
+    def __init__(self, vocab_size: int, embedding_dim: int = EMBEDDING_DIM) -> None:
         self.vocab_size = vocab_size
         self.embedding_dim = embedding_dim
 
@@ -11,7 +14,7 @@ class SGNS:
         self.W_embedding = np.random.rand(vocab_size, embedding_dim) * 0.01
         self.W_context = np.random.rand(vocab_size, embedding_dim) * 0.01
     
-    def forward_pass(self, center_idx, positive_idx, negative_indices):
+    def forward_pass(self, center_idx: NDArray[np.int_], positive_idx: NDArray[np.int_], negative_indices: NDArray[np.int_]) -> Tuple[NDArray[np.floating], NDArray[np.floating], NDArray[np.floating], NDArray[np.floating], NDArray[np.floating], NDArray[np.floating]]:
         """
         Compute the forward pass for a single training example
         """  
@@ -24,7 +27,7 @@ class SGNS:
 
         return loss_pos, loss_neg, grad_center_pos, grad_center_neg, grad_context_pos, grad_context_neg
     
-    def update(self, center_idx, positive_idx, negative_indices, grad_center, grad_context_pos, grad_context_neg, learning_rate):
+    def update(self, center_idx: NDArray[np.int_], positive_idx: NDArray[np.int_], negative_indices: NDArray[np.int_], grad_center: NDArray[np.floating], grad_context_pos: NDArray[np.floating], grad_context_neg: NDArray[np.floating], learning_rate: float) -> None:
         """
         Update the weights of the model
         """
@@ -35,7 +38,7 @@ class SGNS:
         for i in range(num_negatives):
             np.add.at(self.W_context, negative_indices[:, i], -learning_rate * grad_context_neg[:, i])
 
-    def normalize_embeddings(self):
+    def normalize_embeddings(self) -> None:
         """
         Normalize the embedding matrix to prevent overflow
         """

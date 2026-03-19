@@ -1,8 +1,10 @@
+from typing import Any
 import numpy as np
-import config as config
-from utils import create_checkpoint
 
-def train(dataset, model, epochs=config.EPOCHS, lr=config.LEARNING_RATE, num_neg_samples=config.NEGATIVE_SAMPLES):
+from utils import create_checkpoint
+from config import EPOCHS, LEARNING_RATE, NEGATIVE_SAMPLES, BATCH_SIZE, MAKE_CHECKPOINTS, CHECKPOINT_INTERVAL
+
+def train(dataset: Any, model: Any, epochs: int = EPOCHS, lr: float = LEARNING_RATE, num_neg_samples: int = NEGATIVE_SAMPLES) -> None:
     freq = dataset.vocab_freq ** 0.75
     prob = freq / np.sum(freq)
 
@@ -10,7 +12,7 @@ def train(dataset, model, epochs=config.EPOCHS, lr=config.LEARNING_RATE, num_neg
         pairs = dataset.generate_pairs()
         
         total_loss = 0
-        for batch in dataset.batch_generator(pairs, config.BATCH_SIZE):
+        for batch in dataset.batch_generator(pairs, BATCH_SIZE):
             
             # Get centers and contexts
             centers = batch[:, 1]
@@ -34,7 +36,7 @@ def train(dataset, model, epochs=config.EPOCHS, lr=config.LEARNING_RATE, num_neg
             total_loss += np.sum(loss_pos + loss_neg)
 
         # Create a checkpoint if enabled
-        if config.MAKE_CHECKPOINTS and (epoch + 1) % config.CHECKPOINT_INTERVAL == 0:
+        if MAKE_CHECKPOINTS and (epoch + 1) % CHECKPOINT_INTERVAL == 0:
             create_checkpoint(model, dataset)
 
         print(f"Epoch {epoch+1}/{epochs} - Loss: {total_loss:.4f}")

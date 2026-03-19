@@ -1,22 +1,25 @@
 import re
 from collections import Counter
+from typing import Generator, List, Tuple
 import numpy as np
+from numpy.typing import NDArray
+
 from config import MIN_WORD_FREQUENCY, WINDOW_SIZE
 
 class Dataset:
-    def __init__(self, raw_text, window_size=WINDOW_SIZE, word_min_frequency=MIN_WORD_FREQUENCY):        
-        self.tokens = self.tokenize(raw_text)
+    def __init__(self, raw_text: str, window_size: int = WINDOW_SIZE, word_min_frequency: int = MIN_WORD_FREQUENCY) -> None:        
+        self.tokens = self.tokenize(raw_text)[:10000]
         print(self.tokens[:40])
         self.build_vocab(word_min_frequency)
         self.window_size = window_size
 
-    def tokenize(self, raw_text):
+    def tokenize(self, raw_text: str) -> List[str]:
         """
         Tokenize the raw text into words, splitting on non-word characters
         """
         return re.findall(r'\b\w+\b', raw_text.lower())
     
-    def build_vocab(self, word_min_frequency):
+    def build_vocab(self, word_min_frequency: int) -> None:
         """
         Create the vocabulary, mappings, and token frequencies, also filter out low frequency words
         """
@@ -32,7 +35,7 @@ class Dataset:
         self.token_indices = [self.word_to_idx[token] for token in self.tokens if token in self.word_to_idx]
         self.vocab_freq = np.array([word_freq[self.idx_to_word[idx]] for idx in range(self.vocab_size)])
     
-    def generate_pairs(self):
+    def generate_pairs(self) -> Generator[Tuple[int, int], None, None]:
         """
         Generate the positive examples for the dataset
         """
@@ -42,7 +45,7 @@ class Dataset:
                 if context_idx != idx:
                     yield (token_idx, self.token_indices[context_idx])
     
-    def batch_generator(self, generator, batch_size):
+    def batch_generator(self, generator: Generator[Tuple[int, int], None, None], batch_size: int) -> Generator[NDArray[np.int_], None, None]:
         """
         Utility function to create batches from a generator
         """
