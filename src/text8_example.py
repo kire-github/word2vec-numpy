@@ -3,7 +3,7 @@ from dataset import Dataset
 from model import SGNS
 from train import train
 
-def most_similar(word, dataset, model,number=5):
+def most_similar(word, dataset, model, number=5):
     if word not in dataset.word_to_idx:
         return []
     idx = dataset.word_to_idx[word]
@@ -13,7 +13,7 @@ def most_similar(word, dataset, model,number=5):
     return [dataset.idx_to_word[i] for i in nearest]
 
 
-if __name__ == "__main__":
+def text8_example():
     # ----------------------
     # 1. Load and preprocess vocab
     # ----------------------
@@ -45,3 +45,6 @@ if __name__ == "__main__":
     print("Most similar to 'anarchism':", most_similar("anarchism", dataset, model))
     print("Most similar to 'term':", most_similar("term", dataset, model))
     print("Most similar to 'class':", most_similar("class", dataset, model))
+
+if __name__ == "__main__":
+    text8_example()
